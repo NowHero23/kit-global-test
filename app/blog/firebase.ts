@@ -197,7 +197,7 @@ const getBlogPosts = async (
 };
 
 // Додамо функцію для отримання списку всіх тегів для вашого TagInput
-const getAllTags = async () => {
+const getAllTags = async (): Promise<Tag[]> => {
   try {
     const tagsRef = collection(db, "tags");
     const q = query(tagsRef, orderBy("count", "desc"), limit(100));
@@ -209,6 +209,7 @@ const getAllTags = async () => {
     })) as Tag[];
   } catch (error) {
     console.error("Error fetching tags:", error);
+    return [];
   }
 };
 const getBlogAuthorId = async (postId: string) => {

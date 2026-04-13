@@ -15,10 +15,10 @@ const initialState: TagsState = {
 };
 
 // Асинхронний запит до Firebase
-export const fetchAllTags = createAsyncThunk("tags/fetchAll", async () => {
+export const fetchAllTags = createAsyncThunk<Tag[], void>("tags/fetchAll", async () => {
   const response = await getAllTags();
-  // Повертаємо масив імен тегів (це потрапить у payload екшену fulfilled)
-  return response; // Повертаємо весь об'єкт тегу
+  // Повертаємо масив тегів (це потрапить у payload екшену fulfilled)
+  return response;
 });
 
 const tagsSlice = createSlice({
