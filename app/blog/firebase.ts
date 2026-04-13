@@ -313,6 +313,7 @@ const getCommentsByPostId = async (postId: string) => {
     });
   } catch (error) {
     console.error("Error fetching Comments By PostId:", error);
+    return [];
   }
 };
 

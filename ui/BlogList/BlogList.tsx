@@ -1,6 +1,6 @@
 import { Panel } from "@/ui/Panel/Panel";
 import { PostPreview } from "@/ui/PostPreview";
-import { getAllTags, getBlogPosts } from "@/app/blog/firebase";
+import { getBlogPosts } from "@/app/blog/firebase";
 import { TagFilter } from "../TagFilter";
 import { LoadMorePosts } from "./LoadMorePosts";
 import Link from "next/link";

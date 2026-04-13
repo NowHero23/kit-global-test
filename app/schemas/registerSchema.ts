@@ -11,20 +11,6 @@ export const registerSchema = z.object({
     .max(30, { message: "Be at most 30 characters long." })
     .trim(),
 });
-// .refine((data) => data.password === data.confirmPassword, {
-//   message: "Password is not the same as confirm password.",
-//   path: ["confirmPassword"],
-// });
-
-// .superRefine(({ password, confirmPassword }, ctx) => {
-//   if (confirmPassword !== password) {
-//     ctx.addIssue({
-//       code: "custom",
-//       message: "Passwords do not match",
-//       path: ["confirmPassword"], // Вказуємо шлях до поля
-//     });
-//   }
-// });
 
 export type RegisterActionState = {
   form?: {
