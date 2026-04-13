@@ -1,12 +1,13 @@
-import { Timestamp } from "firebase/firestore";
-import User from "./user";
+import Tag from "./tag";
 
 type BlogPost = {
   id?: string;
   title: string;
   description: string;
   content: string;
-  author: User | null;
-  createdAt: Timestamp;
+  authorId: string;
+  authorNickname: string;
+  createdAt: Date;
+  tags: Tag[];
 };
 export default BlogPost;

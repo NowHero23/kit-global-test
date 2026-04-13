@@ -39,12 +39,9 @@ export async function loginAction(
     const firebaseError = error as unknown as { code: string; message: string };
     let errorMessage = "Помилка під час входу";
 
-    if (firebaseError.code === "auth/user-not-found") {
-      errorMessage = "Користувача з таким email не існує";
-    } else if (firebaseError.code === "auth/wrong-password") {
-      errorMessage = "Неправильний пароль";
-    } else if (firebaseError.code === "auth/invalid-email") {
-      errorMessage = "Невалідний формат email";
+    console.log("code:" + firebaseError.code);
+    if (firebaseError.code === "auth/invalid-credential") {
+      errorMessage = "Невірний email або пароль";
     } else if (firebaseError.code === "auth/too-many-requests") {
       errorMessage = "Занадто багато спроб входу. Спробуйте пізніше";
     }

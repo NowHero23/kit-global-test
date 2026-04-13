@@ -1,4 +1,4 @@
-import CreatePostForm from "@/ui/Forms/createPostForm";
+import { CreatePostForm } from "@/ui/Forms/createPostForm";
 import { Panel } from "@/ui/Panel";
 import Link from "next/link";
 

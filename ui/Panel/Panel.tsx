@@ -1,10 +1,10 @@
-import { cx } from "../classNames";
-import { JSX } from "react";
-export function Panel(props: JSX.IntrinsicElements["div"]) {
+import { cn } from "../classNames";
+
+export function Panel(props: React.ComponentProps<"div">) {
   return (
     <div
       {...props}
-      className={cx(
+      className={cn(
         // "flex flex-col items-center justify-center h-full p-4",
         "text-left w-full bg-white rounded-lg shadow dark:border xl:p-0 dark:bg-gray-800 dark:border-gray-700 px-2 md:px-0",
 

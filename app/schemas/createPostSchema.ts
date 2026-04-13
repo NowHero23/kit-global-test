@@ -1,7 +1,7 @@
 import z from "zod";
+import { tagsValidation } from "./validation/tagsValidation";
 
 export const createPostSchema = z.object({
-  id: z.string().optional(),
   title: z
     .string()
     .min(10, "Мінімум 10 символів")
@@ -17,18 +17,21 @@ export const createPostSchema = z.object({
     .min(20, "Мінімум 20 символів")
     .max(50000, "Максимальна довжина 50000 символів")
     .trim(),
+  tags: tagsValidation
 });
 
-export type CreateActionState = {
+export type CreatePostActionState = {
   form?: {
     title?: string;
     description?: string;
     content?: string;
+    tags?: string[];
   };
   errors?: {
     title?: string[];
     description?: string[];
     content?: string[];
+    tags?: string[];
     general?: string[];
   };
 };

@@ -1,5 +1,6 @@
 import z from "zod";
-import { CreateActionState } from "./createPostSchema";
+import { CreatePostActionState } from "./createPostSchema";
+import { tagsValidation } from "./validation/tagsValidation";
 
 export const editPostSchema = z.object({
   id: z.string(),
@@ -18,15 +19,14 @@ export const editPostSchema = z.object({
     .min(20, "Мінімум 20 символів")
     .max(50000, "Максимальна довжина 50000 символів")
     .trim(),
+  tags: tagsValidation,
 });
 
-export type EditActionState = CreateActionState & {
-  form?: CreateActionState["form"] & {
+export type EditPostActionState = CreatePostActionState & {
+  form?: CreatePostActionState["form"] & {
     id?: string;
-    userId?: string;
   };
-  errors?: CreateActionState["errors"] & {
+  errors?: CreatePostActionState["errors"] & {
     id?: string[];
-    userId?: string[];
   };
 };

@@ -10,7 +10,7 @@ import {
 import { getTokens } from "next-firebase-auth-edge";
 import { Metadata } from "../auth/AuthContext";
 import { toUser } from "../shared/user";
-import { deleteBlogPost } from "../blog/firebase";
+import { deleteBlogPost, getBlogAuthorId } from "../blog/firebase";
 
 export async function deletePostAction(
   _prev: DeletePostActionState,
@@ -31,6 +31,12 @@ export async function deletePostAction(
       form,
       errors: validationResult.error.flatten().fieldErrors,
     };
+  }
+
+  const authorId = await getBlogAuthorId(validationResult.data.slug);
+
+  if (authorId !== user.uid) {
+    return { form, errors: { general: ["Forbidden"] } };
   }
 
   await deleteBlogPost(validationResult.data.slug);

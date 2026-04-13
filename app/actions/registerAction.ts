@@ -21,6 +21,19 @@ export async function RegisterAction(
       errors: validationResult.error.flatten().fieldErrors,
     };
   }
+
+  if (
+    validationResult.data.password !== validationResult.data.confirmPassword
+  ) {
+    return {
+      form,
+      errors: {
+        password: ["Password is not the same as confirm password."],
+        confirmPassword: ["Password is not the same as confirm password."],
+      },
+    };
+  }
+
   let success = false;
   try {
     console.log(validationResult.data);

@@ -1,8 +1,8 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import blogPostSlice from './reducers/blogPostSlice';
+import tagsSlice from './reducers/tagsSlice';
 
 const rootReducer = combineReducers({
-  blogPostSlice,
+  tagsSlice
 });
 export const setupStore = () => configureStore({ reducer: rootReducer });
 export type RootState = ReturnType<typeof rootReducer>;

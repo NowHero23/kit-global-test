@@ -1,6 +1,13 @@
-import styles from "./MainTitle.module.css";
-import { cx } from "../classNames";
-import { JSX } from "react";
-export function MainTitle(props: JSX.IntrinsicElements["h1"]) {
-  return <h1 {...props} className={cx(styles.title, props.className)} />;
+import { cn } from "../classNames";
+
+export function MainTitle(props: React.ComponentProps<"h1">) {
+  return (
+    <h1
+      {...props}
+      className={cn(
+        "text-2xl md:text-3xl lg:text-4xl my-2 font-semibold leading-tight tracking-tight text-gray-900 dark:text-white",
+        props.className,
+      )}
+    />
+  );
 }

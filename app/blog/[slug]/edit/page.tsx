@@ -21,6 +21,8 @@ export default async function Page({
     );
   }
 
+  const postTags = post.tags?.map((tag) => tag.id) || [];
+
   return (
     <Panel>
       <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
@@ -28,12 +30,11 @@ export default async function Page({
       </h1>
 
       <EditPostForm
-        post={{
-          id: post.id,
-          title: post.title,
-          description: post.description,
-          content: post.content,
-        }}
+        id={post.id}
+        title={post.title}
+        description={post.description}
+        content={post.content}
+        tags={postTags || []}
       />
       <p className="text-sm font-light text-gray-500 dark:text-gray-400">
         Dont edit?{" "}

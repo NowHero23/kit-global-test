@@ -1,55 +1,61 @@
 import Link from "next/link";
-import { cx } from "../classNames";
-import { JSX } from "react";
+import { cn } from "../classNames";
 import { Button } from "../Button";
-import { toUser } from "@/app/shared/user";
-import { getTokens } from "next-firebase-auth-edge";
-import { Metadata } from "@/app/auth/AuthContext";
-import { cookies } from "next/headers";
-import { authConfig } from "@/config/server-config";
+import { TagsList } from "../TagsList";
+import Tag from "@/app/types/tag";
 
-type PostPreviewProps = {
+type PostPreviewProps = React.ComponentProps<"div"> & {
   id?: string | undefined;
   title: string;
   description: string;
   content: string;
   authorId?: string | undefined;
-  authorNickname?: string | undefined;
+  authorNickname?: string;
+  createdAt: Date;
+  tags?: Tag[];
+  userId: string | undefined;
 };
 
-export async function PostPreview(
-  props: JSX.IntrinsicElements["div"] & { post: PostPreviewProps },
-) {
+export async function PostPreview({
+  authorId,
+  authorNickname,
+  createdAt,
+  userId,
+  ...props
+}: PostPreviewProps) {
   const slicedDescriprion =
-    props.post.description.length > 50
-      ? props.post.description.slice(0, 50) + "..."
-      : props.post.description;
+    props.description.length > 50
+      ? props.description.slice(0, 50) + "..."
+      : props.description;
 
-  const tokens = await getTokens<Metadata>(await cookies(), authConfig);
+  const isAuthor = userId === authorId;
 
-  const user = tokens ? toUser(tokens) : null;
-
-  const isAuthor = user?.uid === props.post.authorId;
+  const tags = props?.tags && <TagsList tags={props?.tags} />;
 
   return (
-    <div {...props} className={cx("", props.className)}>
-      <Link href={`/blog/${props.post.id}`}>
-        <h2 className="font-bold text-xl text-center">{props.post.title}</h2>
+    <div {...props} className={cn("", props.className)}>
+      <Link href={`/blog/${props.id}`}>
+        <h2 className="font-bold text-xl text-center text-wrap wrap-break-word">
+          {props.title}
+        </h2>
       </Link>
 
-      <p>{slicedDescriprion}</p>
+      <p className="text-wrap wrap-break-word">{slicedDescriprion}</p>
 
-      <p className="text-sm dark:text-gray-300 mt-2">
-        Author: {props.post.authorNickname}
-      </p>
-
+      <div className="flex justify-between items-center">
+        <p className="text-sm dark:text-gray-300 mt-2 text-wrap">
+          Author: {authorNickname}
+        </p>
+        <p className="text-xs text-gray-400">{createdAt.toLocaleString()}</p>
+      </div>
+      {tags}
       <div className="flex gap-2 items-center mt-2">
-        <Link href={`/blog/${props.post.id}`}>
+        <Link href={`/blog/${props.id}`}>
           <Button className="px-4!"> Read more</Button>
         </Link>
 
         {isAuthor && (
-          <Link href={`/blog/${props.post.id}/edit`}>
+          <Link href={`/blog/${props.id}/edit`}>
             <Button className="px-4! bg-transparent! hover:bg-indigo-900! hover:text-red-500">
               Edit
             </Button>

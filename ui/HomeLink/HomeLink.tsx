@@ -1,12 +1,12 @@
-import { cx } from "../classNames";
-import { JSX } from "react";
+import { cn } from "../classNames";
 import Link from "next/link";
-export function HomeLink(props: JSX.IntrinsicElements["a"]) {
+
+export function HomeLink(props: React.ComponentProps<"a">) {
   return (
     <Link
       href="/"
       {...props}
-      className={cx("text-xl font-bold dark:text-white", props.className)}
+      className={cn("text-xl font-bold dark:text-white", props.className)}
     >
       Kit app
     </Link>

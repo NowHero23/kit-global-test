@@ -1,3 +1,6 @@
+import { getFirebaseApp } from "@/app/firebase";
+import User from "@/app/types/user";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { TokenSet } from "next-firebase-auth-edge/auth";
 
 export const serverConfig = {
@@ -38,7 +41,28 @@ export const authConfig = {
   debug: false,
   //tenantId: clientConfig.tenantId,
   getMetadata: async (tokens: TokenSet) => {
-    return { uid: tokens.decodedIdToken.uid, timestamp: new Date().getTime() };
+    let nickname = tokens.decodedIdToken.name || "Unknown";
+    // Отримуємо нікнейм користувача з Firestore
+    try {
+      const db = getFirestore(getFirebaseApp());
+
+      const userRef = doc(db, "users", tokens.decodedIdToken.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        const userData = userSnap.data() as User;
+        nickname = userData.nickname || nickname;
+      }
+    } catch (error) {
+      console.error("Помилка при отриманні нікнейму з Firestore:", error);
+      // У разі помилки залишиться дефолтне значення (ім'я з токена або "Unknown")
+    }
+
+    return {
+      uid: tokens.decodedIdToken.uid,
+      nickname,
+      timestamp: new Date().getTime(),
+    };
   },
   dynamicCustomClaimsKeys: ["someCustomClaim"],
 };

@@ -2,12 +2,13 @@ import { useState, useCallback } from "react";
 import z from "zod";
 import { Input } from "../Input";
 import { Textarea } from "../Textarea";
+import { ErrorList } from "../Form/ErrorList";
+import { useFormContext } from "../Form/Form";
 
 type ValidatedInputProps = {
   maxLength?: number;
   type: string;
   name: string;
-  wasSubmitted: boolean;
   errors?: string[];
   fieldSchema: z.ZodTypeAny;
   defaultValue?: string | number;
@@ -16,7 +17,8 @@ type ValidatedInputProps = {
 };
 
 const ValidatedInput = (props: ValidatedInputProps) => {
-  const { isMultiline, wasSubmitted, fieldSchema, ...rest } = props;
+  const { wasSubmitted } = useFormContext();
+  const { isMultiline, fieldSchema, ...rest } = props;
 
   const [value, setValue] = useState(String(props.defaultValue || ""));
   const [touched, setTouched] = useState(false);
@@ -36,15 +38,7 @@ const ValidatedInput = (props: ValidatedInputProps) => {
   const handleBlur = () => setTouched(true);
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-  ) => setValue(e.currentTarget.value);
-
-  const errorList = (
-    <ul className="text-sm text-red-500 mt-1 list-disc list-inside">
-      {fieldErrors.map((e) => (
-        <li key={e}>{e}</li>
-      ))}
-    </ul>
-  );
+  ) => setValue(e.target.value);
 
   const currentInput = isMultiline ? (
     <Textarea
@@ -67,7 +61,7 @@ const ValidatedInput = (props: ValidatedInputProps) => {
   return (
     <>
       {currentInput}
-      {shouldRenderErrors && errorList}
+      {shouldRenderErrors && <ErrorList errors={fieldErrors} />}
     </>
   );
 };

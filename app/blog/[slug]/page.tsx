@@ -8,6 +8,9 @@ import { toUser } from "@/app/shared/user";
 import { Metadata } from "@/app/auth/AuthContext";
 import { Button } from "@/ui/Button";
 import { DeletePostButton } from "@/ui/DeletePostButton";
+import { CommentsList } from "@/ui/CommentsList";
+import CreateCommentForm from "@/ui/Forms/createCommentForm";
+import { TagsList } from "@/ui/TagsList";
 
 export default async function Page({
   params,
@@ -22,7 +25,7 @@ export default async function Page({
   const user = tokens ? toUser(tokens) : null;
 
   const isEdit =
-    user?.uid === post?.author?.id ? (
+    user?.uid === post?.authorId ? (
       <div className="flex gap-1">
         <Link href={`${slug}/edit`}>
           <Button>Edit</Button>
@@ -35,24 +38,42 @@ export default async function Page({
       ""
     );
 
+  const tags = post?.tags && <TagsList tags={post?.tags} />;
 
   return (
-    <div className="flex flex-col gap-2 my-2 w-full max-w-lg">
-      <h1 className="text-2xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+    <>
+      <h1 className="wrap-break-word text-2xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
         {post?.title}
       </h1>
-      <Panel className="text-left">
+      <Panel>
         <div>
           <h3 className="font-bold">Description:</h3>
-          <p>{post?.description}</p>
+          <p className="wrap-break-word">{post?.description}</p>
         </div>
 
-        <p>Author: {post?.author?.nickname}</p>
+        <div className="flex justify-between items-center">
+          <p>Author: {post?.authorNickname}</p>
+          <p className="text-xs text-gray-400">
+            {post?.createdAt.toLocaleString()}
+          </p>
+        </div>
+        {tags}
         {isEdit}
       </Panel>
       <Panel>
         <p>{post?.content}</p>
       </Panel>
-    </div>
+
+      <Panel>
+        <h3 className="font-bold">Comments:</h3>
+
+        {/* Тут буде компонент для коментарів */}
+        {/* <Textarea placeholder="Додайте свій коментар..." /> */}
+
+        {user != null && <CreateCommentForm postId={slug} />}
+
+        <CommentsList postId={slug} />
+      </Panel>
+    </>
   );
 }

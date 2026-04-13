@@ -48,13 +48,13 @@ export async function proxy(request: NextRequest) {
       if (PUBLIC_PATHS.includes(request.nextUrl.pathname)) {
         return redirectToHome(request);
       }
-      
+
       const match = request.nextUrl.pathname.match(/^\/blog\/([^\/]+)\/edit$/);
       if (match) {
         const slug = match[1]; // Отримуємо значення з першої дужки
-        
+
         const authorId = await getBlogAuthorId(slug);
-        if(decodedToken.uid!=authorId){
+        if (decodedToken.uid != authorId) {
           return redirectToHome(request);
         }
       }

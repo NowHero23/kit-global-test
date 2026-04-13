@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { Form } from "@/ui/Form/Form";
 import { FormLabel } from "@/ui/Form/FormLabel";
 import { ValidatedInput } from "@/ui/ValidatedInput";
@@ -8,40 +8,34 @@ import { Button } from "@/ui/Button";
 import Link from "next/link";
 import { editPostAction } from "@/app/actions/editPostAction";
 import { editPostSchema } from "@/app/schemas/editPostSchema";
+import { TagInput } from "../TagInput";
 
 type EditPostProps = {
   id?: string | undefined;
   title: string;
   description: string;
   content: string;
+  tags: string[];
 };
 
-export function EditPostForm({ post }: { post: EditPostProps }) {
-  const [wasSubmitted, setWasSubmitted] = useState(false);
-
+export function EditPostForm(props: EditPostProps) {
   const [state, action, isPending] = useActionState(editPostAction, {});
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    setWasSubmitted(true);
-    const formDataObj = new FormData(event.currentTarget);
-    const data = Object.fromEntries(formDataObj);
-    const validationResult = editPostSchema.safeParse(data);
-    if (!validationResult.success) {
-      event.preventDefault();
-    }
-  };
-
   return (
-    <Form onSubmit={handleSubmit} action={action} noValidate>
-      <input type="hidden" name="id" value={post?.id} />
+    <Form
+      action={action}
+      actionState={state}
+      schema={editPostSchema}
+      noValidate
+    >
+      <input type="hidden" name="id" value={props?.id} />
       <div>
         <FormLabel htmlFor="title">Title:</FormLabel>
         <ValidatedInput
           fieldSchema={editPostSchema.shape["title"]}
           name="title"
           type="text"
-          wasSubmitted={wasSubmitted}
-          defaultValue={state.form?.title || post.title}
+          defaultValue={state.form?.title || props.title}
           errors={state.errors?.title}
           maxLength={501}
           isMultiline={true}
@@ -54,8 +48,7 @@ export function EditPostForm({ post }: { post: EditPostProps }) {
           fieldSchema={editPostSchema.shape["description"]}
           name="description"
           type="text"
-          wasSubmitted={wasSubmitted}
-          defaultValue={state.form?.description || post.description}
+          defaultValue={state.form?.description || props.description}
           errors={state.errors?.description}
           maxLength={501}
           isMultiline={true}
@@ -68,12 +61,20 @@ export function EditPostForm({ post }: { post: EditPostProps }) {
           fieldSchema={editPostSchema.shape["content"]}
           name="content"
           type="text"
-          wasSubmitted={wasSubmitted}
-          defaultValue={state.form?.content || post.content}
+          defaultValue={state.form?.content || props.content}
           errors={state.errors?.content}
           maxLength={50001}
           isMultiline={true}
           placeholder="Enter post content"
+        />
+      </div>
+      <div>
+        <FormLabel htmlFor="tags">Tags (press Enter to add):</FormLabel>
+        <TagInput
+          name="tags"
+          fieldSchema={editPostSchema.shape["tags"]}
+          defaultValue={state.form?.tags || props.tags}
+          errors={state.errors?.tags}
         />
       </div>
       <div className="flex items-center">
@@ -81,10 +82,10 @@ export function EditPostForm({ post }: { post: EditPostProps }) {
           Save edits
         </Button>
         <Link
-          href="/"
+          href={`/blog/${props?.id}`}
           className="ml-4 font-medium text-gray-600 hover:underline dark:text-gray-500"
         >
-          <Button className="px-4! bg-red-700! hover:bg-red-900! hover:text-white!">
+          <Button className="px-4 bg-red-700 hover:bg-red-900 hover:text-white dark:bg-red-700 dark:hover:bg-red-900 dark:hover:text-white">
             Cancel
           </Button>
         </Link>

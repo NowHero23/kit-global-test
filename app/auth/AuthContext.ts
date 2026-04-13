@@ -6,7 +6,7 @@ import { Claims } from "next-firebase-auth-edge/auth/claims";
 
 export interface Metadata {
   uid: string;
-  
+  nickname: string;
   timestamp: number;
 }
 

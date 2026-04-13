@@ -2,7 +2,7 @@
 
 import { getTokens } from "next-firebase-auth-edge";
 import {
-  CreateActionState,
+  CreatePostActionState,
   createPostSchema,
 } from "../schemas/createPostSchema";
 import { redirect } from "next/navigation";
@@ -13,36 +13,44 @@ import { toUser } from "../shared/user";
 import { createBlogPost } from "../blog/firebase";
 
 export async function createPostAction(
-  _prev: CreateActionState,
+  _prev: CreatePostActionState,
   formData: FormData,
-): Promise<CreateActionState> {
+): Promise<CreatePostActionState> {
   const tokens = await getTokens<Metadata>(await cookies(), authConfig);
 
-  const form = Object.fromEntries(formData);
+  const formRaw = Object.fromEntries(formData);
 
   const user = tokens ? toUser(tokens) : null;
+
+  const formForState = {
+    ...formRaw,
+    tags:
+      typeof formRaw.tags === "string"
+        ? formRaw.tags.split(",").filter(Boolean)
+        : [],
+  } as any;
+
   if (user == null) {
-    return { form, errors: { general: ["Unauthorized"] } };
+    return { form: formForState, errors: { general: ["Unauthorized"] } };
   }
 
-  const validationResult = createPostSchema.safeParse(form);
+  const validationResult = createPostSchema.safeParse(formRaw);
   if (!validationResult.success) {
     return {
-      form,
+      form: formForState,
       errors: validationResult.error.flatten().fieldErrors,
     };
   }
 
   const postId = await createBlogPost({
     authorId: user.uid,
+    authorNickname: user.metadata.nickname,
     ...validationResult.data,
   });
 
-  console.log("All Data:", {
-    ...validationResult.data,
-  });
   if (postId != null) {
     redirect(`/blog/${postId}`);
   }
-  redirect("/");
+
+  return { form: formForState, errors: { general: ["Failed to create post"] } };
 }

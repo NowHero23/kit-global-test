@@ -1,30 +1,25 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { Form } from "../Form/Form";
 import { FormLabel } from "../Form/FormLabel";
 import { ValidatedInput } from "../ValidatedInput";
 import { Button } from "../Button";
 import { createPostSchema } from "@/app/schemas/createPostSchema";
 import { createPostAction } from "@/app/actions/createPostAction";
+import { ErrorList } from "../Form/ErrorList/ErrorList";
+import { TagInput } from "../TagInput";
 
 export function CreatePostForm() {
-  const [wasSubmitted, setWasSubmitted] = useState(false);
-
   const [state, action, isPending] = useActionState(createPostAction, {});
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    setWasSubmitted(true);
-    const formData = new FormData(event.currentTarget);
-    const data = Object.fromEntries(formData);
-    const validationResult = createPostSchema.safeParse(data);
-    if (!validationResult.success) {
-      event.preventDefault();
-    }
-  };
-
   return (
-    <Form onSubmit={handleSubmit} action={action} noValidate>
+    <Form
+      action={action}
+      actionState={state}
+      schema={createPostSchema}
+      noValidate
+    >
       <div>
         <FormLabel htmlFor="title">Title:</FormLabel>
         <ValidatedInput
@@ -33,7 +28,6 @@ export function CreatePostForm() {
           type="text"
           name="title"
           placeholder="Enter post title"
-          wasSubmitted={wasSubmitted}
           fieldSchema={createPostSchema.shape["title"]}
           defaultValue={state.form?.title}
           errors={state.errors?.title}
@@ -47,7 +41,6 @@ export function CreatePostForm() {
           type="text"
           name="description"
           placeholder="Enter post description"
-          wasSubmitted={wasSubmitted}
           fieldSchema={createPostSchema.shape["description"]}
           defaultValue={state.form?.description}
           errors={state.errors?.description}
@@ -61,12 +54,21 @@ export function CreatePostForm() {
           type="text"
           name="content"
           placeholder="Enter post content"
-          wasSubmitted={wasSubmitted}
           fieldSchema={createPostSchema.shape["content"]}
           defaultValue={state.form?.content}
           errors={state.errors?.content}
         />
       </div>
+      <div>
+        <FormLabel htmlFor="tags">Tags (press Enter to add):</FormLabel>
+        <TagInput
+          name="tags"
+          fieldSchema={createPostSchema.shape["tags"]}
+          defaultValue={state.form?.tags}
+          errors={state.errors?.tags}
+        />
+      </div>
+      <ErrorList errors={state.errors?.general} />
       <div>
         <Button type="submit" disabled={isPending}>
           Create
@@ -75,5 +77,3 @@ export function CreatePostForm() {
     </Form>
   );
 }
-
-export default CreatePostForm;

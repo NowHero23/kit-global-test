@@ -13,5 +13,6 @@ export type DeletePostActionState = {
   errors?: {
     slug?: string[];
     userId?: string[];
+    general?: string[];
   };
 };
